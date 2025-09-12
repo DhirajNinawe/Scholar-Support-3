@@ -17,7 +17,7 @@
             --cream: #FFF2D7;
             --text: #3a2b1c;
             --dark-overlay: rgba(0, 0, 0, 0.5);
-            /* New Color Palette for Navigation Panels */
+            /* NEW: Professional Color Palette for Panels */
             --panel-bg: #F0F4F8;
             --panel-accent-light: #78909C;
             --panel-accent-dark: #546E7A;
@@ -407,38 +407,9 @@
             max-width: 1200px;
             margin: 0 auto 30px auto;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end; /* Align finder button to the right */
             align-items: center;
             gap: 20px;
-        }
-
-        .scheme-search-bar {
-            display: flex;
-            align-items: center;
-            background-color: #f0f4f8;
-            border: 1px solid #e0e0e0;
-            border-radius: 30px;
-            padding: 8px 15px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .scheme-search-bar input {
-            border: none;
-            outline: none;
-            font-size: 16px;
-            width: 100%;
-            background: transparent;
-            color: var(--panel-text);
-        }
-
-        .scheme-search-bar input::placeholder {
-            color: var(--panel-accent-light);
-        }
-
-        .scheme-search-bar svg {
-            margin-right: 10px;
-            stroke: var(--panel-accent-light);
         }
 
         .scheme-category {
@@ -457,7 +428,7 @@
 
         .schemes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 30px;
         }
 
@@ -467,9 +438,19 @@
             padding: 20px;
             text-align: left;
             box-shadow: 0 8px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
+            position: relative; /* Added for potential future elements */
+            /* Animation properties */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out, box-shadow 0.3s ease; /* Added transition */
+        }
+        
+        /* Animation class added by JS */
+        .scheme-card.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .scheme-card:hover {
@@ -569,7 +550,7 @@
         .suggestions-box li {
             padding: 10px 15px;
             cursor: pointer;
-            color: var(--panel-text);
+            color: #3a2b1c; /* Reset color */
         }
 
         .suggestions-box li:hover {
@@ -604,8 +585,8 @@
             visibility: visible;
         }
 
-        /* Scheme Details Modal */
-        #scheme-details-modal {
+        /* Scheme Details & Finder Modal */
+        #scheme-details-modal, #scheme-finder-modal {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -624,7 +605,7 @@
             flex-direction: column;
         }
 
-        #scheme-details-modal.active {
+        #scheme-details-modal.active, #scheme-finder-modal.active {
             opacity: 1;
             visibility: visible;
             transform: translate(-50%, -50%) scale(1);
@@ -647,7 +628,7 @@
         .modal-content {
             padding: 20px;
             overflow-y: auto;
-            color: var(--panel-text);
+            color: #3a2b1c; /* Reset color */
         }
         
         .modal-content h3 {
@@ -690,7 +671,57 @@
             background-color: var(--panel-accent-light);
             transform: scale(1.05);
         }
+        
+        /* Scheme Finder & Reset Buttons */
+        .scheme-finder-btn, #reset-filters-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--panel-accent-dark);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        #reset-filters-btn {
+            background-color: #6c757d; /* A different color for reset */
+            display: none; /* Hidden by default */
+        }
 
+        .scheme-finder-btn:hover, #reset-filters-btn:hover {
+            background-color: var(--panel-accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
+
+        .scheme-finder-btn svg, #reset-filters-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Scheme Finder Modal Form */
+        #finder-form label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--panel-text);
+        }
+
+        #finder-form select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            background-color: #fff;
+        }
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
@@ -726,9 +757,11 @@
                 padding: 80px 20px 100px 20px;
             }
             .schemes-header {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .schemes-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
             }
              .category-title {
                 font-size: 1.8em;
@@ -770,6 +803,12 @@
             .modal-header h2 {
                 font-size: 1.2em;
             }
+             .scheme-finder-btn span, #reset-filters-btn span {
+                display: none; /* Hide text on small screens */
+            }
+            .scheme-finder-btn, #reset-filters-btn {
+                padding: 12px;
+            }
         }
     </style>
 </head>
@@ -783,7 +822,7 @@
             <div class="search-bar" id="search-bar-container">
                 <input type="text" id="hero-search-input" placeholder="Search schemes..." autocomplete="off" />
                 <button id="hero-search-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.3-4.3" />
                     </svg>
@@ -808,16 +847,15 @@
     <!-- Schemes Section (Slide-up panel) -->
     <section id="schemes-section">
         <div class="schemes-header">
-             <div class="search-bar-wrapper">
-                 <div class="scheme-search-bar">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                         <circle cx="11" cy="11" r="8" />
-                         <path d="m21 21-4.3-4.3" />
-                     </svg>
-                     <input type="text" id="scheme-search-input" placeholder="Search all schemes..." autocomplete="off"/>
-                 </div>
-                 <div class="suggestions-box" id="scheme-suggestions"><ul></ul></div>
-             </div>
+             <!-- New Scheme Finder Button -->
+             <button id="reset-filters-btn" title="Reset Filters">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <span>Reset Filters</span>
+             </button>
+             <button id="scheme-finder-btn" class="scheme-finder-btn" title="Find Best Schemes for You">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                 <span>Scheme Finder</span>
+            </button>
         </div>
         
         <div class="scheme-categories-container">
@@ -825,7 +863,17 @@
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Post-Graduate</h2>
                 <div class="schemes-grid">
-                    <div class="scheme-card" data-scheme-id="ambedkar" data-keywords="overseas studies obc ebc masters phd">
+                    <div class="scheme-card" data-scheme-id="pg-rank-holder" data-keywords="level-pg gender-any caste-any university rank holder">
+                        <h3>PG Scholarship for University Rank Holders</h3>
+                        <p>For 1st and 2nd rank holders at UG level to pursue their Master's degree in any Indian university.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="single-girl-child-pg" data-keywords="level-pg gender-female caste-any single girl child">
+                        <h3>PG Indira Gandhi Scholarship for Single Girl Child</h3>
+                        <p>A UGC scheme to support the postgraduate education of single girl children in non-professional courses.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="ambedkar" data-keywords="level-pg type-loan caste-obc caste-ebc overseas masters phd">
                         <h3>Dr. Ambedkar Central Sector Scheme</h3>
                         <p>Interest subsidy on educational loans for overseas studies for students belonging to OBC and EBC categories.</p>
                         <button class="apply-btn">View Details</button>
@@ -837,44 +885,77 @@
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Post-Matric Scholarship</h2>
                 <div class="schemes-grid">
-                    <div class="scheme-card" data-scheme-id="shahu" data-keywords="maharashtra ebc professional technical cap">
+                     <div class="scheme-card" data-scheme-id="central-sector-college" data-keywords="level-ug level-11-12 gender-any caste-ebc college university nsp">
+                        <h3>Central Sector Scheme for College Students</h3>
+                        <p>Scholarship for meritorious students from low-income families to pursue higher education after Class 12.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="shahu" data-keywords="level-ug level-diploma gender-any caste-ebc maharashtra professional technical cap">
                         <h3>Rajarshi Shahu Maharaj Fee Reimbursement</h3>
                         <p>Provides fee reimbursement for EBC students in professional and technical courses admitted via CAP.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="vjnt" data-keywords="maharashtra post-matric vjnt ssc">
+                    <div class="scheme-card" data-scheme-id="vjnt" data-keywords="level-ug level-11-12 gender-any caste-vjnt maharashtra ssc">
                         <h3>Post-Matric Scholarship to VJNT Students</h3>
-                        <p>Financial assistance for VJNT category students pursuing post-SSC courses.</p>
+                        <p>Financial assistance for VJNT category students in Maharashtra pursuing post-SSC courses.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="minority-state" data-keywords="maharashtra minority muslim sikh christian buddhist jain">
-                        <h3>State Minority Scholarship</h3>
-                        <p>For minority community students pursuing professional/technical degree or diploma courses.</p>
+                    <div class="scheme-card" data-scheme-id="minority-state" data-keywords="level-ug level-diploma gender-any caste-minority maharashtra">
+                        <h3>State Minority Scholarship (Maharashtra)</h3>
+                        <p>For minority community students in Maharashtra pursuing professional/technical courses.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
                 </div>
             </div>
 
+            <!-- NEW CATEGORY: Merit-Based & Research Schemes -->
+            <div class="scheme-category">
+                <h2 class="category-title">Merit-Based & Research Schemes</h2>
+                <div class="schemes-grid">
+                    <div class="scheme-card" data-scheme-id="pmrf" data-keywords="level-phd research science technology iit iisc">
+                        <h3>Prime Minister's Research Fellowship (PMRF)</h3>
+                        <p>To attract the best talent into research, offering fellowships to students for PhD programs in science and technology.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="inspire-she" data-keywords="level-ug science merit research bachelor master">
+                        <h3>INSPIRE Scholarship (SHE)</h3>
+                        <p>For students pursuing Bachelor's and Master's level courses in Natural and Basic Sciences. Successor to KVPY.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="ntse" data-keywords="level-pre-matric level-11-12 level-ug level-pg merit science social science">
+                        <h3>National Talent Search Examination (NTSE)</h3>
+                        <p>A national-level scholarship program to identify and nurture talented students for higher studies.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                </div>
+            </div>
+
+
             <!-- Schemes for Girls -->
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Girls</h2>
                 <div class="schemes-grid">
-                    <div class="scheme-card" data-scheme-id="pragati" data-keywords="technical education girls">
+                    <div class="scheme-card" data-scheme-id="pragati" data-keywords="gender-female level-ug level-diploma technical education">
                         <h3>AICTE Pragati Scholarship for Girls</h3>
                         <p>Provides financial assistance for the advancement of girls participating in technical education.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="begum" data-keywords="minority community girls">
+                     <div class="scheme-card" data-scheme-id="single-girl-child-pg" data-keywords="level-pg gender-female single girl child">
+                        <h3>PG Indira Gandhi Scholarship for Single Girl Child</h3>
+                        <p>A UGC scheme to support the postgraduate education of single girl children in non-professional courses.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="begum" data-keywords="gender-female caste-minority level-11-12 community">
                         <h3>Begum Hazrat Mahal National Scholarship</h3>
                         <p>For meritorious girl students from minority communities who cannot continue their education due to financial constraints.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="udaan" data-keywords="engineering college mentor girls">
+                    <div class="scheme-card" data-scheme-id="udaan" data-keywords="gender-female level-11-12 engineering college mentor">
                         <h3>CBSE Udaan Scheme</h3>
                         <p>A project by CBSE to mentor girl students to compete for admission in premier engineering colleges.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                     <div class="scheme-card" data-scheme-id="savitribai" data-keywords="maharashtra backward class 5th 10th girls">
+                     <div class="scheme-card" data-scheme-id="savitribai" data-keywords="gender-female level-pre-matric caste-sc caste-vjnt caste-sbc maharashtra backward class">
                         <h3>Savitribai Phule Scholarship (Maharashtra)</h3>
                         <p>Financial aid for girls from backward classes in standards 5th to 10th to encourage education.</p>
                         <button class="apply-btn">View Details</button>
@@ -886,23 +967,28 @@
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Minority / Specific Castes</h2>
                 <div class="schemes-grid">
-                    <div class="scheme-card" data-scheme-id="begum" data-keywords="minority community girls">
-                        <h3>Begum Hazrat Mahal National Scholarship</h3>
-                        <p>For meritorious girl students from minority communities who cannot continue their education due to financial constraints.</p>
+                     <div class="scheme-card" data-scheme-id="nsp-minority-postmatric" data-keywords="caste-minority level-11-12 level-ug level-pg level-phd nsp national scholarship portal">
+                        <h3>Post-Matric Scholarship for Minorities (NSP)</h3>
+                        <p>National scholarship for students from minority communities for studies from Class 11 to PhD.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="vjnt" data-keywords="maharashtra post-matric vjnt ssc">
-                        <h3>Post-Matric Scholarship to VJNT Students</h3>
-                        <p>Financial assistance for VJNT category students pursuing post-SSC courses.</p>
+                    <div class="scheme-card" data-scheme-id="sc-students-postmatric" data-keywords="caste-sc level-11-12 level-ug level-pg national scholarship">
+                        <h3>Post Matric Scholarship for SC Students</h3>
+                        <p>A centrally sponsored scheme to provide financial assistance to Scheduled Caste students for post-matriculation courses.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="minority-state" data-keywords="maharashtra minority muslim sikh christian buddhist jain">
-                        <h3>State Minority Scholarship</h3>
-                        <p>For minority community students pursuing professional/technical degree or diploma courses.</p>
+                    <div class="scheme-card" data-scheme-id="pm-yasasvi" data-keywords="level-pre-matric level-11-12 caste-obc caste-ebc caste-vjnt top class school">
+                        <h3>PM YASASVI Scheme</h3>
+                        <p>For meritorious OBC, EBC, and DNT students studying in Class 9 and 11 in top-class schools.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="ambedkar" data-keywords="overseas studies obc ebc masters phd">
-                        <h3>Dr. Ambedkar Central Sector Scheme</h3>
+                    <div class="scheme-card" data-scheme-id="vjnt" data-keywords="level-11-12 level-ug maharashtra caste-vjnt ssc">
+                        <h3>Post-Matric Scholarship to VJNT Students (MH)</h3>
+                        <p>Financial assistance for VJNT category students in Maharashtra pursuing post-SSC courses.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="ambedkar" data-keywords="level-pg type-loan caste-obc caste-ebc overseas masters phd">
+                        <h3>Dr. Ambedkar Scheme for Overseas Studies</h3>
                         <p>Interest subsidy on educational loans for overseas studies for students belonging to OBC and EBC categories.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
@@ -913,18 +999,18 @@
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Education Loan</h2>
                 <div class="schemes-grid">
-                    <div class="scheme-card" data-scheme-id="subsidy" data-keywords="interest subsidy weaker section loan">
+                    <div class="scheme-card" data-scheme-id="subsidy" data-keywords="type-loan caste-ebc interest subsidy weaker section">
                         <h3>Central Sector Interest Subsidy Scheme</h3>
                         <p>Provides full interest subsidy during the moratorium period on loans for students from economically weaker sections.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                     <div class="scheme-card" data-scheme-id="vidyalakshmi" data-keywords="bank loan portal">
+                     <div class="scheme-card" data-scheme-id="vidyalakshmi" data-keywords="type-loan bank portal">
                         <h3>Vidya Lakshmi Portal</h3>
                         <p>A single-window portal for students to access information and apply for educational loans from various banks.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
-                    <div class="scheme-card" data-scheme-id="ambedkar" data-keywords="overseas studies obc ebc loan">
-                        <h3>Dr. Ambedkar Central Sector Scheme</h3>
+                    <div class="scheme-card" data-scheme-id="ambedkar" data-keywords="level-pg type-loan caste-obc caste-ebc overseas">
+                        <h3>Dr. Ambedkar Scheme for Overseas Studies</h3>
                         <p>Interest subsidy on educational loans for overseas studies for students belonging to OBC and EBC categories.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
@@ -935,9 +1021,14 @@
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Hostels</h2>
                 <div class="schemes-grid">
-                    <div class="scheme-card" data-scheme-id="panjabrao" data-keywords="maharashtra hostel maintenance farmer labourer">
-                        <h3>Dr. Panjabrao Deshmukh Hostel Allowance</h3>
-                        <p>Provides hostel maintenance allowance for children of marginal farmers and registered labourers.</p>
+                    <div class="scheme-card" data-scheme-id="panjabrao" data-keywords="type-hostel maharashtra maintenance farmer labourer">
+                        <h3>Dr. Panjabrao Deshmukh Hostel Allowance (MH)</h3>
+                        <p>Provides hostel maintenance allowance for children of marginal farmers and registered labourers in Maharashtra.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                     <div class="scheme-card" data-scheme-id="babasaheb-hostel" data-keywords="type-hostel caste-sc maharashtra babasaheb ambedkar">
+                        <h3>Babasaheb Ambedkar Swadhar Yojana (MH)</h3>
+                        <p>Provides financial assistance for accommodation, boarding, and other expenses for SC/Neo-Buddhist students.</p>
                         <button class="apply-btn">View Details</button>
                     </div>
                 </div>
@@ -947,7 +1038,21 @@
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Sports</h2>
                 <div class="schemes-grid">
-                    <p class="empty-category-message">More schemes for this category will be added soon.</p>
+                    <div class="scheme-card" data-scheme-id="khelo-india" data-keywords="type-sports scholarship national talent khelo india">
+                        <h3>Khelo India Scholarship Scheme</h3>
+                        <p>Financial aid and training for talented young athletes identified through Khelo India Games.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="sai-scheme" data-keywords="type-sports authority of india sai training athletes">
+                        <h3>Sports Authority of India (SAI) Schemes</h3>
+                        <p>Various schemes for training, coaching, and financial support to athletes across different age groups.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                     <div class="scheme-card" data-scheme-id="shiv-chhatrapati" data-keywords="type-sports maharashtra award player coach chhatrapati">
+                        <h3>Shiv Chhatrapati Sports Award (Maharashtra)</h3>
+                        <p>Prestigious state award recognizing outstanding sportspersons, providing financial benefits and recognition.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
                 </div>
             </div>
 
@@ -955,13 +1060,27 @@
             <div class="scheme-category">
                 <h2 class="category-title">Schemes for Internship</h2>
                 <div class="schemes-grid">
-                    <p class="empty-category-message">More schemes for this category will be added soon.</p>
+                     <div class="scheme-card" data-scheme-id="niti-aayog" data-keywords="type-internship policy government niti aayog delhi">
+                        <h3>NITI Aayog Internship Scheme</h3>
+                        <p>An opportunity for young individuals to familiarize with the work of NITI Aayog and contribute to policy formulation.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="swachh-bharat" data-keywords="type-internship summer village social work swachh bharat">
+                        <h3>Swachh Bharat Summer Internship</h3>
+                        <p>Engages youth across the country in Swachh Bharat related activities at the village level.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
+                    <div class="scheme-card" data-scheme-id="tulip-internship" data-keywords="type-internship technical urban local bodies aicte tulip">
+                        <h3>AICTE (TULIP) Internship</h3>
+                        <p>Provides internship opportunities for fresh graduates in urban local bodies and smart cities.</p>
+                        <button class="apply-btn">View Details</button>
+                    </div>
                 </div>
             </div>
 
         </div>
         
-        <p id="no-results-message">This scheme is yet to be uploaded on the portal.</p>
+        <p id="no-results-message">No schemes match your criteria. Please try a different selection.</p>
 
         <div class="back-btn-container">
             <button id="back-to-hero-btn" class="back-btn">← Back to Home</button>
@@ -978,7 +1097,6 @@
             <h2>Navigation</h2>
             <ul>
                 <li><a data-panel="login-panel">🔐 Login</a></li>
-                <li><a data-panel="profile-panel">👤 Your ID</a></li>
                 <li><a data-panel="about-panel">📖 About Us</a></li>
                 <li><a data-panel="help-panel">❓ Help</a></li>
             </ul>
@@ -1004,28 +1122,45 @@
         </div>
     </div>
 
-    <!-- YOUR ID Panel -->
-    <div class="panel" id="profile-panel">
+    <!-- Sign Up Panel (NEW) -->
+    <div class="panel" id="signup-panel">
         <div class="panel-content">
-            <button class="close-btn" data-panel="profile-panel">✖</button>
-            <h2>Your ID</h2>
+            <button class="close-btn" data-panel="signup-panel">✖</button>
+            <h2>Create Account</h2>
             <form onsubmit="return false">
-                <label>Name:</label>
-                <input type="text" placeholder="Enter your name" required />
-                <label>Age:</label>
-                <input type="number" placeholder="Enter your age" required />
-                <label>Caste:</label>
-                <input type="text" placeholder="Enter your caste" required />
-                <label>Education:</label>
-                <input type="text" placeholder="Enter education level" required />
-                <label>College Name:</label>
-                <input type="text" placeholder="Enter your college name" required />
-                <label>Annual Income:</label>
-                <input type="number" placeholder="Enter your family's annual income" required />
-                <button type="submit">Save Info</button>
+                <label for="signup-name">Full Name</label>
+                <input type="text" id="signup-name" placeholder="Enter your full name" required />
+                <label for="signup-email">Email Address</label>
+                <input type="email" id="signup-email" placeholder="Enter your email" required />
+                <label for="signup-password">Create Password</label>
+                <input type="password" id="signup-password" placeholder="Create a new password" required />
+                <label for="signup-confirm-password">Confirm Password</label>
+                <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required />
+                <button type="submit" class="login-btn">Sign Up</button>
+                <div class="login-footer">
+                    <button type="button" class="back-to-login-btn">Already have an account? Login</button>
+                </div>
             </form>
         </div>
     </div>
+
+    <!-- Forgot Password Panel (NEW) -->
+    <div class="panel" id="forgot-password-panel">
+        <div class="panel-content">
+            <button class="close-btn" data-panel="forgot-password-panel">✖</button>
+            <h2>Reset Password</h2>
+            <form onsubmit="return false">
+                <p style="color: var(--panel-text); margin-bottom: 20px;">Enter the email address associated with your account, and we'll send you a link to reset your password.</p>
+                <label for="forgot-email">Email Address</label>
+                <input type="email" id="forgot-email" placeholder="Enter your email" required />
+                <button type="submit" class="login-btn">Send Reset Link</button>
+                <div class="login-footer">
+                    <button type="button" class="back-to-login-btn">Back to Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- ABOUT US Panel -->
     <div class="panel" id="about-panel">
@@ -1034,7 +1169,7 @@
             <h2>About Us</h2>
             <p>
                 <strong>Welcome to Scholar Support – Your trusted gateway to student empowerment through government schemes!</strong><br><br>
-                 <!-- About us content... -->
+                This platform is designed to simplify access to government schemes for every student across India. We bridge the information gap, transforming opportunities into action with smart filters, detailed guides, and easy access.
             </p>
         </div>
     </div>
@@ -1045,7 +1180,7 @@
             <button class="close-btn" data-panel="help-panel">✖</button>
             <h2>Help Desk</h2>
             <p>
-                 <!-- Help content... -->
+                If you have any questions about eligibility, documents, or the application process, feel free to reach out to our support team. We're here to help you confidently take the next step in your educational journey.
             </p>
         </div>
     </div>
@@ -1063,13 +1198,66 @@
             <a href="#" id="modal-link" class="official-link-btn" target="_blank" rel="noopener noreferrer">Visit Official Site</a>
         </div>
     </div>
+    
+    <!-- Scheme Finder Modal -->
+    <div id="scheme-finder-modal">
+        <div class="modal-header">
+            <h2>Find the Best Scheme for You</h2>
+            <button class="close-btn" id="finder-modal-close-btn">✖</button>
+        </div>
+        <div class="modal-content">
+            <form id="finder-form" onsubmit="return false;">
+                <label for="finder-gender">Your Gender:</label>
+                <select id="finder-gender">
+                    <option value="any">Any</option>
+                    <option value="gender-male">Male</option>
+                    <option value="gender-female">Female</option>
+                    <option value="gender-other">Other</option>
+                </select>
+
+                <label for="finder-caste">Your Caste Category:</label>
+                <select id="finder-caste">
+                    <option value="any">Any / General</option>
+                    <option value="caste-obc">OBC</option>
+                    <option value="caste-ebc">EBC / EWS</option>
+                    <option value="caste-sc">SC / Neo-Buddhist</option>
+                    <option value="caste-vjnt">VJNT</option>
+                    <option value="caste-sbc">SBC</option>
+                    <option value="caste-minority">Minority</option>
+                </select>
+
+                <label for="finder-level">Your Current Education Level:</label>
+                <select id="finder-level">
+                    <option value="any">Any</option>
+                    <option value="level-pre-matric">Pre-Matric (5th-10th)</option>
+                    <option value="level-11-12">Class 11-12</option>
+                    <option value="level-diploma">Diploma</option>
+                    <option value="level-ug">Undergraduate (UG)</option>
+                    <option value="level-pg">Post-Graduate (PG)</option>
+                    <option value="level-phd">PhD</option>
+                </select>
+
+                <label for="finder-type">Preferred Scheme Type:</label>
+                <select id="finder-type">
+                    <option value="any">Any</option>
+                    <option value="type-loan">Education Loan</option>
+                    <option value="type-hostel">Hostel</option>
+                    <option value="type-sports">Sports</option>
+                    <option value="type-internship">Internship</option>
+                </select>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="finder-apply-btn" class="official-link-btn">Find Schemes</button>
+        </div>
+    </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- SCHEME DETAILS DATA ---
             const schemeDetailsData = {
-                // Maharashtra Schemes
+                 // Maharashtra Schemes
                 shahu: {
                     title: "Rajarshi Chhatrapati Shahu Maharaj Shikshan Shulkh Shishyavrutti Yojana",
                     eligibility: `
@@ -1158,6 +1346,30 @@
                             <li>Previous year's marksheet.</li>
                         </ul>`,
                     link: "https://mahadbtmahait.gov.in/login/login"
+                },
+                "babasaheb-hostel": {
+                    title: "Babasaheb Ambedkar Swadhar Yojana (Maharashtra)",
+                    eligibility: `
+                        <ul>
+                            <li>Students must belong to SC or Neo-Buddhist categories.</li>
+                            <li>Must be a domicile of Maharashtra.</li>
+                            <li>Secured at least 60% marks in previous examination.</li>
+                            <li>Family annual income should be less than ₹2.5 lakh.</li>
+                            <li>Student must not be admitted to a government hostel.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Annual assistance up to ₹51,000 in Mumbai/Pune (and other metro cities) and up to ₹43,000 in other areas.</li>
+                            <li>Covers accommodation, boarding, and other educational expenses.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Caste Certificate.</li>
+                            <li>Domicile and Income Certificate.</li>
+                            <li>Marksheet of previous examination.</li>
+                            <li>Aadhaar card linked bank account.</li>
+                        </ul>`,
+                    link: "https://sjsa.maharashtra.gov.in/en/scheme-category/education-training"
                 },
                 // National Schemes
                 pragati: {
@@ -1283,8 +1495,8 @@
                         </ul>`,
                     link: "https://www.vidyalakshmi.co.in/"
                 },
-                 ambedkar: {
-                    title: "Dr. Ambedkar Central Sector Scheme",
+                ambedkar: {
+                    title: "Dr. Ambedkar Central Sector Scheme for Overseas Studies",
                     eligibility: `
                         <ul>
                             <li>Students belonging to OBC and EBC categories.</li>
@@ -1302,7 +1514,263 @@
                             <li>Offer letter from the foreign university.</li>
                         </ul>`,
                     link: "https://nsfdc.nic.in/"
+                },
+                "khelo-india": {
+                    title: "Khelo India Scholarship Scheme",
+                    eligibility: `
+                        <ul>
+                            <li>Talented athletes under the age of 17.</li>
+                            <li>Must be identified and selected through Khelo India Games performance.</li>
+                            <li>Must be an Indian citizen.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Annual scholarship of ₹6.28 lakh for 8 years.</li>
+                            <li>Covers training, accommodation, diet, equipment, and a monthly out-of-pocket allowance.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Birth Certificate / Aadhaar Card.</li>
+                            <li>Sports achievement certificates.</li>
+                            <li>Bank account details.</li>
+                        </ul>`,
+                    link: "https://kheloindia.gov.in/ap/"
+                },
+                "sai-scheme": {
+                    title: "Sports Authority of India (SAI) Schemes",
+                    eligibility: `
+                        <ul>
+                            <li>Varies by scheme, generally for talented athletes from sub-junior to senior levels.</li>
+                            <li>Selection is based on performance in national/state championships or through talent scouting.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Access to top-class training facilities and coaches.</li>
+                            <li>Stipends, medical support, and competition exposure.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Proof of age and residence.</li>
+                            <li>Certificates of sports achievements.</li>
+                        </ul>`,
+                    link: "https://sportsauthorityofindia.nic.in/sai/training-schemes"
+                },
+                "shiv-chhatrapati": {
+                    title: "Shiv Chhatrapati Sports Award (Maharashtra)",
+                    eligibility: `
+                        <ul>
+                            <li>Sportspersons from Maharashtra with outstanding performance at national and international levels.</li>
+                            <li>Applicant must be a resident of Maharashtra for at least 15 years.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Cash prize, a citation, and immense recognition from the state government.</li>
+                            <li>Boosts player's profile for future opportunities.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Domicile certificate.</li>
+                            <li>Record of sports achievements with valid proof.</li>
+                            <li>Recommendation from the respective sports association.</li>
+                        </ul>`,
+                    link: "https://sports.maharashtra.gov.in/sports-policy-2012-gr/"
+                },
+                "niti-aayog": {
+                    title: "NITI Aayog Internship Scheme",
+                    eligibility: `
+                        <ul>
+                            <li>Bonafide students of any recognized University/Institution in India or abroad.</li>
+                            <li>Undergraduate students must have completed at least two years of their course.</li>
+                            <li>Postgraduate students are also eligible.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Experience certificate on successful completion.</li>
+                            <li>Opportunity to work closely with government policy-making.</li>
+                            <li>No stipend is paid.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Application form submitted through the online portal.</li>
+                            <li>No Objection Certificate (NOC) from the student's institution.</li>
+                        </ul>`,
+                    link: "https://www.niti.gov.in/internship"
+                },
+                "swachh-bharat": {
+                    title: "Swachh Bharat Summer Internship",
+                    eligibility: `
+                        <ul>
+                            <li>Students enrolled in Colleges/Universities.</li>
+                            <li>Can register individually or in teams.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Certificate of Internship upon successful completion of 100 hours of work.</li>
+                            <li>Top performers can receive awards at college, university, state, and national levels.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Registration through the official portal.</li>
+                            <li>Valid student ID card.</li>
+                        </ul>`,
+                    link: "https://swachhbharatmission.gov.in/SBMCMS/index.htm"
+                },
+                "tulip-internship": {
+                    title: "AICTE (TULIP) Internship",
+                    eligibility: `
+                        <ul>
+                            <li>Indian citizens who have completed their final year of B.Tech, B.Plan, B.Arch, BA, BSc, BCom.</li>
+                            <li>Should have graduated in the last 18 months.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Practical experience in urban development and smart city projects.</li>
+                            <li>Stipend as per the guidelines of the urban local body/smart city.</li>
+                            <li>Digital certificate upon completion.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Registration on the AICTE internship portal.</li>
+                            <li>Degree certificate or provisional certificate.</li>
+                            <li>Address proof.</li>
+                        </ul>`,
+                    link: "https://internship.aicte-india.org/"
+                },
+                // All-India Schemes
+                "pg-rank-holder": {
+                    title: "PG Scholarship for University Rank Holders",
+                    eligibility: `
+                        <ul>
+                            <li>Must be a 1st or 2nd rank holder at the undergraduate level.</li>
+                            <li>Pursuing a full-time Master's degree course at a recognized Indian university.</li>
+                            <li>Age limit is 30 years at the time of admission in PG course.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Scholarship of ₹3,100 per month for a duration of two years.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Undergraduate degree certificate with rank proof from the university.</li>
+                            <li>Admission proof for the PG course.</li>
+                            <li>Aadhaar card.</li>
+                        </ul>`,
+                    link: "https://www.ugc.ac.in/schemes/guidelines_post_graduate_merit_scholarship"
+                },
+                "single-girl-child-pg": {
+                    title: "PG Indira Gandhi Scholarship for Single Girl Child",
+                    eligibility: `
+                        <ul>
+                            <li>Must be a single girl child in the family.</li>
+                            <li>Must have taken admission in a regular, full-time 1st year Master's degree course.</li>
+                            <li>Age limit is 30 years at the time of admission.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Scholarship of ₹36,200 per annum for a duration of two years.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>An affidavit on a ₹50 stamp paper from the parents stating she is the only child.</li>
+                            <li>Admission proof for the PG course.</li>
+                            <li>Aadhaar card.</li>
+                        </ul>`,
+                    link: "https://www.ugc.ac.in/schemes/guidelines_post_graduate_indira_gandhi_scholarship"
+                },
+                "central-sector-college": {
+                    title: "Central Sector Scheme of Scholarship for College and University Students",
+                    eligibility: `
+                        <ul>
+                            <li>Students who are above 80th percentile of successful candidates in the relevant stream from a particular Board of Examination in Class 12.</li>
+                            <li>Pursuing a regular course in College/University.</li>
+                            <li>Parental income should not exceed ₹4.5 lakh per annum.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>₹12,000 per annum at Graduation level for the first three years.</li>
+                            <li>₹20,000 per annum at Post-Graduation level.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Class 12th marksheet.</li>
+                            <li>Income certificate.</li>
+                            <li>Aadhaar card and bank details.</li>
+                        </ul>`,
+                    link: "https://scholarships.gov.in/"
+                },
+                "nsp-minority-postmatric": {
+                    title: "Post-Matric Scholarships Scheme for Minorities (NSP)",
+                    eligibility: `
+                        <ul>
+                            <li>Students belonging to notified minority communities (Muslim, Christian, Sikh, Buddhist, Jain, Parsi).</li>
+                            <li>Studying in Class 11, 12, UG, PG, Ph.D.</li>
+                            <li>Must have secured at least 50% marks in the previous final examination.</li>
+                            <li>Annual family income should not exceed ₹2 lakh.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Admission and tuition fees are covered.</li>
+                            <li>Maintenance allowance is provided.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Minority community declaration.</li>
+                            <li>Income certificate.</li>
+                            <li>Previous year marksheet.</li>
+                        </ul>`,
+                    link: "https://scholarships.gov.in/"
+                },
+                "sc-students-postmatric": {
+                    title: "Post Matric Scholarship for SC Students",
+                    eligibility: `
+                        <ul>
+                            <li>Students must belong to the Scheduled Caste (SC) category.</li>
+                            <li>Must be studying in a post-matriculation or post-secondary course.</li>
+                            <li>Annual parental income should not exceed ₹2.5 lakh.</li>
+                        </ul>`,
+                    benefits: `
+                        <ul>
+                            <li>Full reimbursement of tuition fees and other non-refundable compulsory charges.</li>
+                            <li>Monthly maintenance allowance.</li>
+                        </ul>`,
+                    documents: `
+                        <ul>
+                            <li>Caste Certificate (SC).</li>
+                            <li>Income certificate.</li>
+                            <li>Proof of admission and fees structure.</li>
+                        </ul>`,
+                    link: "https://scholarships.gov.in/"
+                },
+                 // NEWLY ADDED SCHEMES
+                "pmrf": {
+                    title: "Prime Minister's Research Fellowship (PMRF)",
+                    eligibility: `<ul><li>For students pursuing PhD in Science and Technology domains from IISc, IITs, NITs, IISERs & centrally funded IIITs.</li><li>Requires a minimum CGPA and a strong research proposal.</li></ul>`,
+                    benefits: `<ul><li>Stipend of ₹70,000 to ₹80,000 per month.</li><li>Research grant of ₹2 lakh per annum.</li></ul>`,
+                    documents: `<ul><li>Academic transcripts.</li><li>Research proposal and statement of purpose.</li><li>Recommendation letters.</li></ul>`,
+                    link: "https://www.pmrf.in/"
+                },
+                "inspire-she": {
+                    title: "INSPIRE Scholarship (SHE)",
+                    eligibility: `<ul><li>Students in top 1% of their 12th board exams.</li><li>Enrolled in B.Sc. or Integrated M.Sc. courses in basic & natural sciences.</li><li>Age group of 17-22 years.</li></ul>`,
+                    benefits: `<ul><li>Annual scholarship of ₹80,000.</li><li>Mentorship from renowned scientists.</li></ul>`,
+                    documents: `<ul><li>Class 12th marksheet and pass certificate.</li><li>Endorsement letter from the Principal/Director of the College/University.</li></ul>`,
+                    link: "https://www.online-inspire.gov.in/"
+                },
+                "ntse": {
+                    title: "National Talent Search Examination (NTSE)",
+                    eligibility: `<ul><li>Students of Class X studying in recognized schools.</li><li>There is no domicile restriction.</li></ul>`,
+                    benefits: `<ul><li>Scholarship of ₹1250 per month for Class XI-XII.</li><li>₹2000 per month for Undergraduates and Postgraduates.</li><li>Amount for Ph.D. is fixed according to UGC norms.</li></ul>`,
+                    documents: `<ul><li>School ID and certificates.</li><li>Caste and disability certificate (if applicable).</li><li>Domicile Certificate.</li></ul>`,
+                    link: "https://ncert.nic.in/ntse.php"
+                },
+                "pm-yasasvi": {
+                    title: "PM YASASVI Scheme",
+                    eligibility: `<ul><li>Students from OBC, EBC, and DNT categories.</li><li>Studying in Class 9 or 11 in a Top Class School.</li><li>Parental annual income should not exceed ₹2.5 lakh.</li></ul>`,
+                    benefits: `<ul><li>Scholarship covering tuition fees and hostel fees up to ₹75,000 per annum for Class 9-10 and up to ₹1,25,000 for Class 11-12.</li></ul>`,
+                    documents: `<ul><li>Caste and Income certificate.</li><li>Previous year marksheet.</li><li>Aadhaar Card.</li></ul>`,
+                    link: "https://yet.nta.ac.in/"
                 }
+
             };
 
             // --- Element Selections ---
@@ -1319,117 +1787,145 @@
             const heroButton = document.querySelector('.hero-button');
             const schemesSection = document.getElementById('schemes-section');
             const backToHeroBtn = document.getElementById('back-to-hero-btn');
-            const schemeSearchInput = document.getElementById('scheme-search-input');
-            const schemeSuggestionsBox = document.getElementById('scheme-suggestions');
             const schemeCategories = document.querySelectorAll('.scheme-category');
             const noResultsMessage = document.getElementById('no-results-message');
-            const allSchemeCards = document.querySelectorAll('.scheme-card');
+            // NEW Selectors for signup/forgot password flow
+            const signupBtn = document.querySelector('.signup-btn');
+            const forgotBtn = document.querySelector('.forgot-btn');
+            const backToLoginBtns = document.querySelectorAll('.back-to-login-btn');
             
-            // New Modal Elements
+            // Modal Elements
             const schemeDetailsModal = document.getElementById('scheme-details-modal');
             const modalCloseBtn = document.getElementById('modal-close-btn');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
             const modalLink = document.getElementById('modal-link');
-            const applyButtons = document.querySelectorAll('.apply-btn');
+            
+            // Finder Modal Elements
+            const schemeFinderBtn = document.getElementById('scheme-finder-btn');
+            const resetFiltersBtn = document.getElementById('reset-filters-btn');
+            const schemeFinderModal = document.getElementById('scheme-finder-modal');
+            const finderModalCloseBtn = document.getElementById('finder-modal-close-btn');
+            const finderApplyBtn = document.getElementById('finder-apply-btn');
 
             let activePanel = null; 
 
             // --- Data Source for Search ---
             const allSchemeTitles = Object.values(schemeDetailsData).map(s => s.title);
 
-            // --- Levenshtein Distance Function for Fuzzy Search ---
-            const levenshtein = (a, b) => {
-                if (a.length === 0) return b.length;
-                if (b.length === 0) return a.length;
-                const matrix = [];
-                for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
-                for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
-                for (let i = 1; i <= b.length; i++) {
-                    for (let j = 1; j <= a.length; j++) {
-                        if (b.charAt(i - 1) === a.charAt(j - 1)) {
-                            matrix[i][j] = matrix[i - 1][j - 1];
-                        } else {
-                            matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
-                        }
-                    }
-                }
-                return matrix[b.length][a.length];
-            };
-
             // --- Reusable Functions ---
             const openSchemesPanel = () => {
                 schemesSection.classList.add('active');
                 siteHeader.classList.add('schemes-view-active');
                 document.body.classList.add('no-scroll');
+                 // Trigger animations when panel opens
+                triggerCardAnimations();
             };
 
             const closeSchemesPanel = () => {
                 schemesSection.classList.remove('active');
                 siteHeader.classList.remove('schemes-view-active');
-                if (!activePanel && !schemeDetailsModal.classList.contains('active')) {
+                if (!activePanel && !schemeDetailsModal.classList.contains('active') && !schemeFinderModal.classList.contains('active')) {
                     document.body.classList.remove('no-scroll');
                 }
             };
+            
+            const applyFinderFilters = () => {
+                const gender = document.getElementById('finder-gender').value;
+                const caste = document.getElementById('finder-caste').value;
+                const level = document.getElementById('finder-level').value;
+                const type = document.getElementById('finder-type').value;
 
-            const filterSchemes = (searchTerm) => {
-                let totalVisibleCards = 0;
-                const searchWords = searchTerm.toLowerCase().split(' ').filter(w => w.length > 0);
+                let totalMatches = 0;
 
-                schemeCategories.forEach(category => {
-                    let categoryHasVisibleCards = false;
-                    const cardsInCategory = category.querySelectorAll('.scheme-card');
-                    
-                    cardsInCategory.forEach(card => {
-                        const cardText = (card.dataset.keywords + ' ' + card.textContent).toLowerCase();
-                        
-                        let isMatch = false;
-                        if (!searchTerm) {
-                            isMatch = true;
-                        } else {
-                            isMatch = searchWords.every(word => cardText.includes(word));
+                // 1. Calculate and store a relevance score for each scheme card
+                document.querySelectorAll('.scheme-card').forEach(card => {
+                    const keywords = card.dataset.keywords.toLowerCase();
+                    let score = 0;
+
+                    // Score based on gender match
+                    if (gender !== 'any') {
+                        if (keywords.includes(gender)) {
+                            score += 2; // Strong match for specific gender
+                        } else if (keywords.includes('gender-any')) {
+                            score += 1; // Weaker match for 'any' gender
                         }
+                    }
 
-                        card.style.display = isMatch ? 'flex' : 'none';
-                        if (isMatch) {
-                            categoryHasVisibleCards = true;
-                            totalVisibleCards++;
-                        }
-                    });
+                    // Score based on caste match
+                    if (caste !== 'any') {
+                        if (keywords.includes(caste)) score += 2;
+                        else if (keywords.includes('caste-any')) score += 1;
+                    }
+
+                    // Score based on education level match
+                    if (level !== 'any') {
+                        if (keywords.includes(level)) score += 2;
+                        else if (keywords.includes('level-any')) score += 1;
+                    }
+
+                    // Score based on scheme type match
+                    if (type !== 'any') {
+                        if (keywords.includes(type)) score += 2;
+                        else if (keywords.includes('type-any')) score += 1;
+                    }
                     
-                    // Hide category title if no cards are visible, but don't hide the empty message placeholders
-                    const emptyMessage = category.querySelector('.empty-category-message');
-                    if (emptyMessage) {
-                        category.style.display = 'block'; // Always show categories with placeholder text
-                    } else {
-                        category.style.display = categoryHasVisibleCards ? 'block' : 'none';
+                    card.dataset.score = score; // Store score on the card
+                    if (score > 0) {
+                        totalMatches++;
                     }
                 });
-                noResultsMessage.style.display = totalVisibleCards === 0 ? 'block' : 'none';
-            };
 
-            const updateSuggestions = (input, suggestionsBox) => {
-                const searchTerm = input.value.toLowerCase();
-                suggestionsBox.querySelector('ul').innerHTML = '';
-                if (!searchTerm) {
-                    suggestionsBox.style.display = 'none';
-                    return;
-                }
+                // 2. Re-order cards within each category based on the calculated score
+                schemeCategories.forEach(category => {
+                    const grid = category.querySelector('.schemes-grid');
+                    const cards = Array.from(grid.querySelectorAll('.scheme-card'));
 
-                const suggestions = allSchemeTitles.filter(title => 
-                    title.toLowerCase().includes(searchTerm) || levenshtein(searchTerm, title.toLowerCase().split(' ')[0]) < 3
-                ).slice(0, 5);
+                    // Sort the cards in descending order of score
+                    cards.sort((a, b) => b.dataset.score - a.dataset.score);
 
-                if (suggestions.length > 0) {
-                    suggestions.forEach(title => {
-                        const li = document.createElement('li');
-                        li.textContent = title;
-                        suggestionsBox.querySelector('ul').appendChild(li);
+                    // Re-append the sorted cards to the grid and hide non-matches
+                    cards.forEach(card => {
+                        if (parseInt(card.dataset.score) > 0) {
+                            card.style.display = 'flex';
+                            grid.appendChild(card); // appendChild moves the element
+                        } else {
+                            card.style.display = 'none';
+                        }
                     });
-                    suggestionsBox.style.display = 'block';
-                } else {
-                    suggestionsBox.style.display = 'none';
-                }
+                });
+                
+                // 3. Hide any categories that have no visible schemes left
+                schemeCategories.forEach(category => {
+                    const visibleCards = category.querySelectorAll('.scheme-card[style*="display: flex"]');
+                    category.style.display = visibleCards.length > 0 ? 'block' : 'none';
+                });
+
+                // 4. Show the 'no results' message if there are no matches at all
+                noResultsMessage.style.display = totalMatches === 0 ? 'block' : 'none';
+                resetFiltersBtn.style.display = 'flex';
+                closeFinderModal();
+                triggerCardAnimations();
+            };
+            
+            const resetFilters = () => {
+                 // 1. Reset all cards to be visible and clear scores
+                document.querySelectorAll('.scheme-card').forEach(card => {
+                    card.style.display = 'flex';
+                    delete card.dataset.score;
+                });
+
+                // 2. Make all categories visible again
+                schemeCategories.forEach(category => {
+                    category.style.display = 'block';
+                });
+
+                // 3. Hide the no-results message and reset button
+                noResultsMessage.style.display = 'none';
+                resetFiltersBtn.style.display = 'none';
+
+                // 4. Re-trigger animations
+                triggerCardAnimations();
             };
             
             // --- Sidebar and Right Panel Logic ---
@@ -1437,7 +1933,7 @@
                 sidebar.classList.remove('active');
                 panels.forEach(p => p.classList.remove('active'));
                 activePanel = null;
-                if (!schemeDetailsModal.classList.contains('active')) {
+                if (!schemeDetailsModal.classList.contains('active') && !schemeFinderModal.classList.contains('active')) {
                     backdropOverlay.classList.remove('active');
                     document.body.classList.remove('no-scroll');
                 }
@@ -1487,7 +1983,7 @@
 
             const closeDetailsModal = () => {
                 schemeDetailsModal.classList.remove('active');
-                if (!activePanel) {
+                if (!activePanel && !schemeFinderModal.classList.contains('active')) {
                     backdropOverlay.classList.remove('active');
                     if(schemesSection.classList.contains('active')) {
                        document.body.classList.add('no-scroll');
@@ -1497,8 +1993,45 @@
                 }
             };
             
-            // --- Event Listeners ---
+            // --- Scheme Finder Modal Logic ---
+            const openFinderModal = () => {
+                schemeFinderModal.classList.add('active');
+                backdropOverlay.classList.add('active');
+                document.body.classList.add('no-scroll');
+            };
 
+            const closeFinderModal = () => {
+                schemeFinderModal.classList.remove('active');
+                if (!activePanel && !schemeDetailsModal.classList.contains('active')) {
+                    backdropOverlay.classList.remove('active');
+                    if(schemesSection.classList.contains('active')) {
+                       document.body.classList.add('no-scroll');
+                    } else {
+                       document.body.classList.remove('no-scroll');
+                    }
+                }
+            };
+            
+            // --- Animation Logic ---
+            const triggerCardAnimations = () => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.scheme-card').forEach(card => {
+                    card.classList.remove('visible'); // Reset animation state
+                    if (card.style.display !== 'none') { // Only observe visible cards
+                       observer.observe(card);
+                    }
+                });
+            };
+
+            // --- Event Listeners ---
             logoBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (schemesSection.classList.contains('active')) closeSchemesPanel();
@@ -1506,42 +2039,28 @@
                 else openSidebar();
             });
             
-            heroButton.addEventListener('click', () => {
-                openSchemesPanel();
-                schemeSearchInput.value = '';
-                filterSchemes('');
-            });
-
+            heroButton.addEventListener('click', openSchemesPanel);
+            
+            // Simplified Hero Search
             heroSearchBtn.addEventListener('click', () => {
-                const searchTerm = heroSearchInput.value;
                 openSchemesPanel();
-                schemeSearchInput.value = searchTerm;
-                filterSchemes(searchTerm);
-                heroSuggestionsBox.style.display = 'none';
+                 setTimeout(() => {
+                    const finderButton = document.getElementById('scheme-finder-btn');
+                    if(finderButton) {
+                        finderButton.style.transform = 'scale(1.1)';
+                        finderButton.style.boxShadow = '0 0 20px rgba(84, 110, 122, 0.7)';
+                        setTimeout(() => {
+                           finderButton.style.transform = '';
+                           finderButton.style.boxShadow = '';
+                        }, 500);
+                    }
+                }, 100);
             });
 
-            backToHeroBtn.addEventListener('click', closeSchemesPanel);
 
-            heroSearchInput.addEventListener('input', () => updateSuggestions(heroSearchInput, heroSuggestionsBox));
-            schemeSearchInput.addEventListener('input', (e) => {
-                updateSuggestions(schemeSearchInput, schemeSuggestionsBox);
-                filterSchemes(e.target.value);
-            });
-
-            heroSuggestionsBox.addEventListener('click', (e) => {
-                if (e.target.tagName === 'LI') {
-                    heroSearchInput.value = e.target.textContent;
-                    heroSuggestionsBox.style.display = 'none';
-                    heroSearchBtn.click();
-                }
-            });
-
-            schemeSuggestionsBox.addEventListener('click', (e) => {
-                if (e.target.tagName === 'LI') {
-                    schemeSearchInput.value = e.target.textContent;
-                    schemeSuggestionsBox.style.display = 'none';
-                    filterSchemes(e.target.textContent);
-                }
+            backToHeroBtn.addEventListener('click', () => {
+                closeSchemesPanel();
+                resetFilters(); // Reset filters when going back to home
             });
 
             sidebarLinks.forEach(link => {
@@ -1554,31 +2073,45 @@
             closeButtons.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (btn.id === 'close-sidebar-btn') closeAllSidePanels();
+                    if (btn.id === 'close-sidebar-btn') {
+                        closeAllSidePanels();
+                    }
                     else { 
-                        const panelToClose = document.getElementById(e.currentTarget.getAttribute('data-panel'));
+                        // This now closes any panel, including the new ones
+                        const panelId = e.currentTarget.getAttribute('data-panel');
+                        const panelToClose = document.getElementById(panelId);
                         if (panelToClose) {
                             panelToClose.classList.remove('active');
-                            activePanel = 'sidebar';
+                            // After closing a sub-panel, decide where to go.
+                            // If it was signup or forgot, we go back to the main sidebar view.
+                            if(panelId === 'signup-panel' || panelId === 'forgot-password-panel' || panelId === 'login-panel'){
+                                activePanel = 'sidebar'; // Go back to sidebar context
+                            } else {
+                                closeAllSidePanels();
+                            }
                         }
                     }
                 });
             });
 
             backdropOverlay.addEventListener('click', () => {
-                if (schemeDetailsModal.classList.contains('active')) {
-                    closeDetailsModal();
-                }
+                if (schemeDetailsModal.classList.contains('active')) closeDetailsModal();
+                if (schemeFinderModal.classList.contains('active')) closeFinderModal();
+                
                 if(activePanel && activePanel !== 'sidebar'){
                     document.getElementById(activePanel).classList.remove('active');
-                    activePanel = 'sidebar';
+                    // Check if we are closing a sub-panel of login
+                    if(activePanel === 'signup-panel' || activePanel === 'forgot-password-panel'){
+                         openPanel('login-panel'); // Re-open login panel for better UX
+                    } else {
+                         activePanel = 'sidebar';
+                    }
                 } else { 
                     closeAllSidePanels();
                 }
             });
 
-            // New Listeners for Modal
-            applyButtons.forEach(button => {
+            document.querySelectorAll('.apply-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const schemeCard = e.target.closest('.scheme-card');
                     const schemeId = schemeCard.dataset.schemeId;
@@ -1587,17 +2120,36 @@
             });
 
             modalCloseBtn.addEventListener('click', closeDetailsModal);
+            
+            // Finder Modal Listeners
+            schemeFinderBtn.addEventListener('click', openFinderModal);
+            finderModalCloseBtn.addEventListener('click', closeFinderModal);
+            finderApplyBtn.addEventListener('click', applyFinderFilters);
+            resetFiltersBtn.addEventListener('click', resetFilters);
 
-
-            document.addEventListener('click', (e) => {
-                if (!heroSearchInput.parentElement.contains(e.target)) heroSuggestionsBox.style.display = 'none';
-                if (!schemeSearchInput.parentElement.contains(e.target)) schemeSuggestionsBox.style.display = 'none';
+            // NEW Listeners for Login, Signup, and Forgot Password flow
+            signupBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openPanel('signup-panel');
             });
 
-            document.querySelectorAll('.sidebar, .panel, #scheme-details-modal').forEach(el => {
+            forgotBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openPanel('forgot-password-panel');
+            });
+
+            backToLoginBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPanel('login-panel');
+                });
+            });
+
+            document.querySelectorAll('.sidebar, .panel, #scheme-details-modal, #scheme-finder-modal').forEach(el => {
                 el.addEventListener('click', e => e.stopPropagation());
             });
         });
     </script>
 </body>
 </html>
+
