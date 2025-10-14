@@ -407,6 +407,63 @@
             text-decoration: underline;
         }
 
+        .panel-content .report-btn {
+            margin-top: 30px;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--accent-500); /* Use accent color */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+        }
+
+        .panel-content .report-btn:hover {
+            background-color: var(--accent-600);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .panel-content textarea {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 16px;
+            width: 100%;
+            background-color: var(--bg-subtle);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .panel-content textarea:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .back-to-help-btn {
+            background: none;
+            border: none;
+            color: var(--primary-500);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1em;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-help-btn:hover {
+            color: var(--primary-600);
+            text-decoration: underline;
+        }
+
         .close-btn {
             float: right;
             font-size: 24px;
@@ -714,7 +771,7 @@
         }
          #reset-filters-btn:hover {
              background-color: var(--text-primary);
-         }
+           }
 
         .scheme-finder-btn svg, #reset-filters-btn svg {
             width: 24px;
@@ -826,9 +883,6 @@
             .site-header {
                 justify-content: space-between;
             }
-            #search-bar-container {
-                display: none;
-            }
             .hero-logo-display {
                 height: 140px;
             }
@@ -866,18 +920,6 @@
     <header class="site-header" id="site-header">
         <div class="logo" id="logo-btn">
             <img src="https://i.ibb.co/ZRgpz3KH/a-logo-design-featuring-the-text-scholar-A6y-DD5u-NTwen-OL8l4-DHOjg-N5-Xs-Tw-YCQz-Qg-ALMEaz-R6-A-rem.png" alt="Scholar Support Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x60/FFF2D7/3a2b1c?text=Logo';" />
-        </div>
-        <div class="search-bar-wrapper" id="hero-search-wrapper">
-            <div class="search-bar" id="search-bar-container">
-                <input type="text" id="hero-search-input" placeholder="Search schemes..." autocomplete="off" />
-                <button id="hero-search-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.3-4.3" />
-                    </svg>
-                </button>
-            </div>
-            <div class="suggestions-box" id="hero-suggestions"><ul></ul></div>
         </div>
     </header>
 
@@ -1143,8 +1185,8 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <div class="sidebar-header">
-                 <h2>Navigation</h2>
-                 <button class="close-btn" id="close-sidebar-btn">✖</button>
+                <h2>Navigation</h2>
+                <button class="close-btn" id="close-sidebar-btn">✖</button>
             </div>
             <ul>
                 <li><a data-panel="login-panel">
@@ -1228,8 +1270,12 @@
             <button class="close-btn" data-panel="about-panel">✖</button>
             <h2>About Us</h2>
             <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05em;">
-                <strong style="color: var(--text-primary);">Welcome to Scholar Support – Your trusted gateway to student empowerment through government schemes!</strong><br><br>
-                This platform is designed to simplify access to government schemes for every student across India. We bridge the information gap, transforming opportunities into action with smart filters, detailed guides, and easy access.
+                <strong style="color: var(--text-primary);">Welcome to Scholar Support — Your Gateway to Educational Opportunities.</strong><br><br>
+                At Scholar Support, we believe that no deserving student should miss an opportunity due to lack of information.<br>
+                Our mission is to create a one-stop platform that brings together all government scholarship schemes from across India, along with complete details like eligibility criteria, benefits, deadlines, and official links.<br><br>
+                We understand that many students struggle to find authentic and updated information about scholarships. That’s why Scholar Support was created — to make this process simple, transparent, and accessible to everyone.<br><br>
+                Whether you are a school student, college student, or pursuing higher education, our platform helps you discover and apply for the scholarships you truly deserve.<br><br>
+                Together, we aim to empower education through awareness — because the right information at the right time can change a student’s future.
             </p>
         </div>
     </div>
@@ -1240,8 +1286,39 @@
             <button class="close-btn" data-panel="help-panel">✖</button>
             <h2>Help Desk</h2>
             <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05em;">
-                If you have any questions about eligibility, documents, or the application process, feel free to reach out to our support team. We're here to help you confidently take the next step in your educational journey.
+                <strong>Welcome to the Scholar Support Help Desk!</strong><br><br>
+                We’re here to assist you with any questions, feedback, or issues related to our platform. Our goal is to make sure every student can easily access accurate and updated information about government scholarship schemes.<br><br>
+                If you have any doubts, need help finding the right scheme, or face any difficulty while using our website — feel free to contact us anytime.
             </p>
+            <hr style="border: none; border-top: 1px solid var(--border-color); margin: 25px 0;">
+            <h3 style="color: var(--text-primary); font-size: 1.2em; margin-bottom: 15px;">📧 Contact Us</h3>
+            <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05em;">
+                <strong>Phone:</strong> 8087891860<br>
+                <strong>Email:</strong> scholarsupport@gmail.com<br><br>
+                Our support team is available from 9:00 AM to 7:00 PM (Mon–Sat) to help you with your queries. We’ll get back to you as soon as possible.
+            </p>
+            <button type="button" class="report-btn">Report a Problem</button>
+        </div>
+    </div>
+
+    <!-- Report a Problem Panel -->
+    <div class="panel" id="report-problem-panel">
+        <div class="panel-content">
+            <button class="close-btn" data-panel="report-problem-panel">✖</button>
+            <h2>Report a Problem</h2>
+            <form onsubmit="return false">
+                <p style="color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6;">Please describe the issue you are facing. Provide as much detail as possible so we can assist you effectively.</p>
+                <label for="report-name">Your Name</label>
+                <input type="text" id="report-name" placeholder="Enter your full name" required />
+                <label for="report-email">Your Email</label>
+                <input type="email" id="report-email" placeholder="Enter your email address" required />
+                <label for="report-description">Problem Description</label>
+                <textarea id="report-description" placeholder="Describe the problem here..." required></textarea>
+                <button type="submit">Submit Report</button>
+                <div class="login-footer" style="justify-content: center;">
+                    <button type="button" class="back-to-help-btn">Back to Help Desk</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1856,6 +1933,7 @@
             const signupBtn = document.querySelector('.signup-btn');
             const forgotBtn = document.querySelector('.forgot-btn');
             const backToLoginBtns = document.querySelectorAll('.back-to-login-btn');
+            const helpPanel = document.getElementById('help-panel');
             
             // Modal Elements
             const schemeDetailsModal = document.getElementById('scheme-details-modal');
@@ -2132,12 +2210,12 @@
                 if (schemeFinderModal.classList.contains('active')) closeFinderModal();
                 
                 if(activePanel && activePanel !== 'sidebar'){
-                    document.getElementById(activePanel).classList.remove('active');
-                    if(activePanel === 'signup-panel' || activePanel === 'forgot-password-panel'){
+                     document.getElementById(activePanel).classList.remove('active');
+                     if(activePanel === 'signup-panel' || activePanel === 'forgot-password-panel'){
                          openPanel('login-panel');
-                    } else {
+                     } else {
                          activePanel = 'sidebar';
-                    }
+                     }
                 } else { 
                     closeAllSidePanels();
                 }
@@ -2176,6 +2254,23 @@
                 });
             });
 
+            const reportProblemBtn = helpPanel.querySelector('.report-btn');
+            if (reportProblemBtn) {
+                reportProblemBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPanel('report-problem-panel');
+                });
+            }
+
+            const reportProblemPanel = document.getElementById('report-problem-panel');
+            const backToHelpBtn = reportProblemPanel.querySelector('.back-to-help-btn');
+            if (backToHelpBtn) {
+                backToHelpBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPanel('help-panel');
+                });
+            }
+
             document.querySelectorAll('.sidebar, .panel, #scheme-details-modal, #scheme-finder-modal').forEach(el => {
                 el.addEventListener('click', e => e.stopPropagation());
             });
@@ -2183,4 +2278,6 @@
     </script>
 </body>
 </html>
+
+
 
